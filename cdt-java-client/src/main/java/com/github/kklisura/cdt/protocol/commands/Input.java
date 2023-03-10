@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.events.input.DragIntercepted;
 import com.github.kklisura.cdt.protocol.support.annotations.EventName;
 import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
@@ -110,7 +90,7 @@ public interface Input {
    * @param commands Editing commands to send with the key event (e.g., 'selectAll') (default: []).
    *     These are related to but not equal the command names used in `document.execCommand` and
    *     NSStandardKeyBindingResponding. See
-   *     https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h
+   *     https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/editing/commands/editor_command_names.h
    *     for valid command names.
    */
   void dispatchKeyEvent(
@@ -138,6 +118,38 @@ public interface Input {
    */
   @Experimental
   void insertText(@ParamName("text") String text);
+
+  /**
+   * This method sets the current candidate text for ime. Use imeCommitComposition to commit the
+   * final text. Use imeSetComposition with empty string as text to cancel composition.
+   *
+   * @param text The text to insert
+   * @param selectionStart selection start
+   * @param selectionEnd selection end
+   */
+  @Experimental
+  void imeSetComposition(
+      @ParamName("text") String text,
+      @ParamName("selectionStart") Integer selectionStart,
+      @ParamName("selectionEnd") Integer selectionEnd);
+
+  /**
+   * This method sets the current candidate text for ime. Use imeCommitComposition to commit the
+   * final text. Use imeSetComposition with empty string as text to cancel composition.
+   *
+   * @param text The text to insert
+   * @param selectionStart selection start
+   * @param selectionEnd selection end
+   * @param replacementStart replacement start
+   * @param replacementEnd replacement end
+   */
+  @Experimental
+  void imeSetComposition(
+      @ParamName("text") String text,
+      @ParamName("selectionStart") Integer selectionStart,
+      @ParamName("selectionEnd") Integer selectionEnd,
+      @Optional @ParamName("replacementStart") Integer replacementStart,
+      @Optional @ParamName("replacementEnd") Integer replacementEnd);
 
   /**
    * Dispatches a mouse event to the page.

@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.types.tracing;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +7,8 @@ import java.util.Map;
 public class TraceConfig {
 
   @Optional private TraceConfigRecordMode recordMode;
+
+  @Optional private Double traceBufferSizeInKb;
 
   @Optional private Boolean enableSampling;
 
@@ -50,6 +32,22 @@ public class TraceConfig {
   /** Controls how the trace buffer stores data. */
   public void setRecordMode(TraceConfigRecordMode recordMode) {
     this.recordMode = recordMode;
+  }
+
+  /**
+   * Size of the trace buffer in kilobytes. If not specified or zero is passed, a default value of
+   * 200 MB would be used.
+   */
+  public Double getTraceBufferSizeInKb() {
+    return traceBufferSizeInKb;
+  }
+
+  /**
+   * Size of the trace buffer in kilobytes. If not specified or zero is passed, a default value of
+   * 200 MB would be used.
+   */
+  public void setTraceBufferSizeInKb(Double traceBufferSizeInKb) {
+    this.traceBufferSizeInKb = traceBufferSizeInKb;
   }
 
   /** Turns on JavaScript stack sampling. */

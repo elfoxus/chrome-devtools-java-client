@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.types.runtime;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import java.util.Map;
@@ -74,7 +54,7 @@ public class ExecutionContextDescription {
   }
 
   /**
-   * A system-unique execution context identifier. Unlike the id, this is unique accross multiple
+   * A system-unique execution context identifier. Unlike the id, this is unique across multiple
    * processes, so can be reliably used to identify specific context while backend performs a
    * cross-process navigation.
    */
@@ -83,7 +63,7 @@ public class ExecutionContextDescription {
   }
 
   /**
-   * A system-unique execution context identifier. Unlike the id, this is unique accross multiple
+   * A system-unique execution context identifier. Unlike the id, this is unique across multiple
    * processes, so can be reliably used to identify specific context while backend performs a
    * cross-process navigation.
    */

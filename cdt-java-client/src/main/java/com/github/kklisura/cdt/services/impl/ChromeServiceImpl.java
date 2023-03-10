@@ -124,7 +124,8 @@ public class ChromeServiceImpl implements ChromeService {
 
   @Override
   public List<ChromeTab> getTabs() throws ChromeServiceException {
-    return Arrays.asList(request(ChromeTab[].class, "http://%s:%d/%s", host, port, LIST_TABS));
+    return Arrays.asList(
+        request(ChromeTab[].class, HttpMethod.GET, "http://%s:%d/%s", host, port, LIST_TABS));
   }
 
   @Override
@@ -134,17 +135,19 @@ public class ChromeServiceImpl implements ChromeService {
 
   @Override
   public ChromeTab createTab(String tab) throws ChromeServiceException {
-    return request(ChromeTab.class, "http://%s:%d/%s?%s", host, port, CREATE_TAB, tab);
+    return request(
+        ChromeTab.class, HttpMethod.PUT, "http://%s:%d/%s?%s", host, port, CREATE_TAB, tab);
   }
 
   @Override
   public void activateTab(ChromeTab tab) throws ChromeServiceException {
-    request(Void.class, "http://%s:%d/%s/%s", host, port, ACTIVATE_TAB, tab.getId());
+    request(
+        Void.class, HttpMethod.GET, "http://%s:%d/%s/%s", host, port, ACTIVATE_TAB, tab.getId());
   }
 
   @Override
   public void closeTab(ChromeTab tab) throws ChromeServiceException {
-    request(Void.class, "http://%s:%d/%s/%s", host, port, CLOSE_TAB, tab.getId());
+    request(Void.class, HttpMethod.GET, "http://%s:%d/%s/%s", host, port, CLOSE_TAB, tab.getId());
 
     // Remove dev tools from cache.
     clearChromeDevToolsServiceCache(tab);
@@ -152,7 +155,7 @@ public class ChromeServiceImpl implements ChromeService {
 
   @Override
   public ChromeVersion getVersion() throws ChromeServiceException {
-    return request(ChromeVersion.class, "http://%s:%d/%s", host, port, VERSION);
+    return request(ChromeVersion.class, HttpMethod.GET, "http://%s:%d/%s", host, port, VERSION);
   }
 
   @Override
@@ -255,13 +258,15 @@ public class ChromeServiceImpl implements ChromeService {
    * Sends a request and parses json response as type T.
    *
    * @param responseType Resulting class type.
+   * @param httpMethod Http method.
    * @param path Path with optional params similar to String.formats params.
    * @param params Path params.
    * @param <T> Type of response type.
    * @return Response object.
    * @throws ChromeServiceException If sending request fails due to any reason.
    */
-  private static <T> T request(Class<T> responseType, String path, Object... params)
+  private static <T> T request(
+      Class<T> responseType, HttpMethod httpMethod, String path, Object... params)
       throws ChromeServiceException {
     HttpURLConnection connection = null;
     InputStream inputStream = null;
@@ -269,6 +274,7 @@ public class ChromeServiceImpl implements ChromeService {
     try {
       URL uri = new URL(String.format(path, params));
       connection = (HttpURLConnection) uri.openConnection();
+      connection.setRequestMethod(httpMethod.name());
 
       int responseCode = connection.getResponseCode();
       if (HttpURLConnection.HTTP_OK == responseCode) {
@@ -326,5 +332,16 @@ public class ChromeServiceImpl implements ChromeService {
     }
 
     return result.toString("UTF-8");
+  }
+
+  private enum HttpMethod {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    PATCH,
+    HEAD,
+    OPTIONS,
+    TRACE
   }
 }

@@ -1,26 +1,8 @@
 package com.github.kklisura.cdt.protocol.types.css;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
+import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
+import java.util.List;
 
 /** CSS property declaration data. */
 public class CSSProperty {
@@ -40,6 +22,8 @@ public class CSSProperty {
   @Optional private Boolean disabled;
 
   @Optional private SourceRange range;
+
+  @Experimental @Optional private List<CSSProperty> longhandProperties;
 
   /** The property name. */
   public String getName() {
@@ -119,5 +103,21 @@ public class CSSProperty {
   /** The entire property range in the enclosing style declaration (if available). */
   public void setRange(SourceRange range) {
     this.range = range;
+  }
+
+  /**
+   * Parsed longhand components of this property if it is a shorthand. This field will be empty if
+   * the given property is not a shorthand.
+   */
+  public List<CSSProperty> getLonghandProperties() {
+    return longhandProperties;
+  }
+
+  /**
+   * Parsed longhand components of this property if it is a shorthand. This field will be empty if
+   * the given property is not a shorthand.
+   */
+  public void setLonghandProperties(List<CSSProperty> longhandProperties) {
+    this.longhandProperties = longhandProperties;
   }
 }

@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.types.audits;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 
 /**
@@ -28,7 +8,7 @@ import com.github.kklisura.cdt.protocol.support.annotations.Optional;
  */
 public class InspectorIssueDetails {
 
-  @Optional private SameSiteCookieIssueDetails sameSiteCookieIssueDetails;
+  @Optional private CookieIssueDetails cookieIssueDetails;
 
   @Optional private MixedContentIssueDetails mixedContentIssueDetails;
 
@@ -48,12 +28,24 @@ public class InspectorIssueDetails {
 
   @Optional private AttributionReportingIssueDetails attributionReportingIssueDetails;
 
-  public SameSiteCookieIssueDetails getSameSiteCookieIssueDetails() {
-    return sameSiteCookieIssueDetails;
+  @Optional private QuirksModeIssueDetails quirksModeIssueDetails;
+
+  @Optional private NavigatorUserAgentIssueDetails navigatorUserAgentIssueDetails;
+
+  @Optional private GenericIssueDetails genericIssueDetails;
+
+  @Optional private DeprecationIssueDetails deprecationIssueDetails;
+
+  @Optional private ClientHintIssueDetails clientHintIssueDetails;
+
+  @Optional private FederatedAuthRequestIssueDetails federatedAuthRequestIssueDetails;
+
+  public CookieIssueDetails getCookieIssueDetails() {
+    return cookieIssueDetails;
   }
 
-  public void setSameSiteCookieIssueDetails(SameSiteCookieIssueDetails sameSiteCookieIssueDetails) {
-    this.sameSiteCookieIssueDetails = sameSiteCookieIssueDetails;
+  public void setCookieIssueDetails(CookieIssueDetails cookieIssueDetails) {
+    this.cookieIssueDetails = cookieIssueDetails;
   }
 
   public MixedContentIssueDetails getMixedContentIssueDetails() {
@@ -132,5 +124,55 @@ public class InspectorIssueDetails {
   public void setAttributionReportingIssueDetails(
       AttributionReportingIssueDetails attributionReportingIssueDetails) {
     this.attributionReportingIssueDetails = attributionReportingIssueDetails;
+  }
+
+  public QuirksModeIssueDetails getQuirksModeIssueDetails() {
+    return quirksModeIssueDetails;
+  }
+
+  public void setQuirksModeIssueDetails(QuirksModeIssueDetails quirksModeIssueDetails) {
+    this.quirksModeIssueDetails = quirksModeIssueDetails;
+  }
+
+  public NavigatorUserAgentIssueDetails getNavigatorUserAgentIssueDetails() {
+    return navigatorUserAgentIssueDetails;
+  }
+
+  public void setNavigatorUserAgentIssueDetails(
+      NavigatorUserAgentIssueDetails navigatorUserAgentIssueDetails) {
+    this.navigatorUserAgentIssueDetails = navigatorUserAgentIssueDetails;
+  }
+
+  public GenericIssueDetails getGenericIssueDetails() {
+    return genericIssueDetails;
+  }
+
+  public void setGenericIssueDetails(GenericIssueDetails genericIssueDetails) {
+    this.genericIssueDetails = genericIssueDetails;
+  }
+
+  public DeprecationIssueDetails getDeprecationIssueDetails() {
+    return deprecationIssueDetails;
+  }
+
+  public void setDeprecationIssueDetails(DeprecationIssueDetails deprecationIssueDetails) {
+    this.deprecationIssueDetails = deprecationIssueDetails;
+  }
+
+  public ClientHintIssueDetails getClientHintIssueDetails() {
+    return clientHintIssueDetails;
+  }
+
+  public void setClientHintIssueDetails(ClientHintIssueDetails clientHintIssueDetails) {
+    this.clientHintIssueDetails = clientHintIssueDetails;
+  }
+
+  public FederatedAuthRequestIssueDetails getFederatedAuthRequestIssueDetails() {
+    return federatedAuthRequestIssueDetails;
+  }
+
+  public void setFederatedAuthRequestIssueDetails(
+      FederatedAuthRequestIssueDetails federatedAuthRequestIssueDetails) {
+    this.federatedAuthRequestIssueDetails = federatedAuthRequestIssueDetails;
   }
 }

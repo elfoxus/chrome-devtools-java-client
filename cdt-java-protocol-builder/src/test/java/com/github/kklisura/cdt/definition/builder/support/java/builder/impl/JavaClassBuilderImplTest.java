@@ -4,7 +4,7 @@ package com.github.kklisura.cdt.definition.builder.support.java.builder.impl;
  * #%L
  * cdt-java-protocol-builder
  * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
+ * Copyright (C) 2018 - 2023 Kenan Klisura
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ import org.junit.runner.RunWith;
  */
 @RunWith(EasyMockRunner.class)
 public class JavaClassBuilderImplTest extends EasyMockSupport {
+
+  String lineSeparator = System.lineSeparator();
   private static final String PACKAGE_NAME = "com.github.kklisura";
   private static final String CLASS_NAME = "ClassName";
   private static final String ANNOTATIONS_PACKAGE_NAME = "com.github.kklisura.annotations";
@@ -74,7 +76,17 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n" + "\n" + "public class ClassName {\n" + "}\n" + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .append("")
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -95,15 +107,25 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "import com.github.kklisura.annotations.Annotation;\n"
-            + "\n"
-            + "@Annotation\n"
-            + "@Deprecated\n"
-            + "public class ClassName {\n"
-            + "}\n"
-            + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("@Annotation")
+            .append(lineSeparator)
+            .append("@Deprecated")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .append("")
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -123,13 +145,22 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "/**\n"
-            + " * Java doc.\n"
-            + " */\n"
-            + "public class ClassName {\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("/**")
+            .append(lineSeparator)
+            .append(" * Java doc.")
+            .append(lineSeparator)
+            .append(" */")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -151,12 +182,20 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n\n"
-            + "import java.util.List;\n"
-            + "\n"
-            + "public class ClassName {\n"
-            + "}\n"
-            + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("import java.util.List;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .append("")
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -177,12 +216,20 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n\n"
-            + "import java.util.List;\n"
-            + "\n"
-            + "public class ClassName {\n"
-            + "}\n"
-            + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("import java.util.List;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .append("")
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -204,26 +251,48 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "public class ClassName {\n"
-            + "\n"
-            + "    private String privateField;\n"
-            + "\n"
-            + "    /**\n"
-            + "     * Private field description\n"
-            + "     */\n"
-            + "    public String getPrivateField() {\n"
-            + "        return privateField;\n"
-            + "    }\n"
-            + "\n"
-            + "    /**\n"
-            + "     * Private field description\n"
-            + "     */\n"
-            + "    public void setPrivateField(String privateField) {\n"
-            + "        this.privateField = privateField;\n"
-            + "    }\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("    private String privateField;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("    /**")
+            .append(lineSeparator)
+            .append("     * Private field description")
+            .append(lineSeparator)
+            .append("     */")
+            .append(lineSeparator)
+            .append("    public String getPrivateField() {")
+            .append(lineSeparator)
+            .append("        return privateField;")
+            .append(lineSeparator)
+            .append("    }")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("    /**")
+            .append(lineSeparator)
+            .append("     * Private field description")
+            .append(lineSeparator)
+            .append("     */")
+            .append(lineSeparator)
+            .append("    public void setPrivateField(String privateField) {")
+            .append(lineSeparator)
+            .append("        this.privateField = privateField;")
+            .append(lineSeparator)
+            .append("    }")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -248,19 +317,34 @@ public class JavaClassBuilderImplTest extends EasyMockSupport {
     javaClassBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "import com.github.kklisura.annotations.Annotation;\n"
-            + "import com.github.kklisura.annotations.Annotation1;\n"
-            + "\n"
-            + "@Annotation\n"
-            + "public class ClassName {\n"
-            + "\n"
-            + "    @Annotation\n"
-            + "    @Annotation1\n"
-            + "    @Deprecated\n"
-            + "    private String privateField;\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation1;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("@Annotation")
+            .append(lineSeparator)
+            .append("public class ClassName {")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("    @Annotation")
+            .append(lineSeparator)
+            .append("    @Annotation1")
+            .append(lineSeparator)
+            .append("    @Deprecated")
+            .append(lineSeparator)
+            .append("    private String privateField;")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();

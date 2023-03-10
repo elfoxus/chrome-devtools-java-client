@@ -1,30 +1,15 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
+import com.github.kklisura.cdt.protocol.events.accessibility.LoadComplete;
+import com.github.kklisura.cdt.protocol.events.accessibility.NodesUpdated;
+import com.github.kklisura.cdt.protocol.support.annotations.EventName;
 import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import com.github.kklisura.cdt.protocol.support.annotations.ParamName;
 import com.github.kklisura.cdt.protocol.support.annotations.ReturnTypeParameter;
 import com.github.kklisura.cdt.protocol.support.annotations.Returns;
+import com.github.kklisura.cdt.protocol.support.types.EventHandler;
+import com.github.kklisura.cdt.protocol.support.types.EventListener;
 import com.github.kklisura.cdt.protocol.types.accessibility.AXNode;
 import java.util.List;
 
@@ -56,8 +41,8 @@ public interface Accessibility {
    * @param backendNodeId Identifier of the backend node to get the partial accessibility tree for.
    * @param objectId JavaScript object id of the node wrapper to get the partial accessibility tree
    *     for.
-   * @param fetchRelatives Whether to fetch this nodes ancestors, siblings and children. Defaults to
-   *     true.
+   * @param fetchRelatives Whether to fetch this node's ancestors, siblings and children. Defaults
+   *     to true.
    */
   @Experimental
   @Returns("nodes")
@@ -77,13 +62,56 @@ public interface Accessibility {
   /**
    * Fetches the entire accessibility tree for the root Document
    *
-   * @param max_depth The maximum depth at which descendants of the root node should be retrieved.
-   *     If omitted, the full tree is returned.
+   * @param depth The maximum depth at which descendants of the root node should be retrieved. If
+   *     omitted, the full tree is returned.
+   * @param frameId The frame for whose document the AX tree should be retrieved. If omited, the
+   *     root frame is used.
    */
   @Experimental
   @Returns("nodes")
   @ReturnTypeParameter(AXNode.class)
-  List<AXNode> getFullAXTree(@Optional @ParamName("max_depth") Integer max_depth);
+  List<AXNode> getFullAXTree(
+      @Optional @ParamName("depth") Integer depth, @Optional @ParamName("frameId") String frameId);
+
+  /** Fetches the root node. Requires `enable()` to have been called previously. */
+  @Experimental
+  @Returns("node")
+  AXNode getRootAXNode();
+
+  /**
+   * Fetches the root node. Requires `enable()` to have been called previously.
+   *
+   * @param frameId The frame in whose document the node resides. If omitted, the root frame is
+   *     used.
+   */
+  @Experimental
+  @Returns("node")
+  AXNode getRootAXNode(@Optional @ParamName("frameId") String frameId);
+
+  /**
+   * Fetches a node and all ancestors up to and including the root. Requires `enable()` to have been
+   * called previously.
+   */
+  @Experimental
+  @Returns("nodes")
+  @ReturnTypeParameter(AXNode.class)
+  List<AXNode> getAXNodeAndAncestors();
+
+  /**
+   * Fetches a node and all ancestors up to and including the root. Requires `enable()` to have been
+   * called previously.
+   *
+   * @param nodeId Identifier of the node to get.
+   * @param backendNodeId Identifier of the backend node to get.
+   * @param objectId JavaScript object id of the node wrapper to get.
+   */
+  @Experimental
+  @Returns("nodes")
+  @ReturnTypeParameter(AXNode.class)
+  List<AXNode> getAXNodeAndAncestors(
+      @Optional @ParamName("nodeId") Integer nodeId,
+      @Optional @ParamName("backendNodeId") Integer backendNodeId,
+      @Optional @ParamName("objectId") String objectId);
 
   /**
    * Fetches a particular accessibility node by AXNodeId. Requires `enable()` to have been called
@@ -95,6 +123,20 @@ public interface Accessibility {
   @Returns("nodes")
   @ReturnTypeParameter(AXNode.class)
   List<AXNode> getChildAXNodes(@ParamName("id") String id);
+
+  /**
+   * Fetches a particular accessibility node by AXNodeId. Requires `enable()` to have been called
+   * previously.
+   *
+   * @param id
+   * @param frameId The frame in whose document the node resides. If omitted, the root frame is
+   *     used.
+   */
+  @Experimental
+  @Returns("nodes")
+  @ReturnTypeParameter(AXNode.class)
+  List<AXNode> getChildAXNodes(
+      @ParamName("id") String id, @Optional @ParamName("frameId") String frameId);
 
   /**
    * Query a DOM node's accessibility subtree for accessible name and role. This command computes
@@ -130,4 +172,19 @@ public interface Accessibility {
       @Optional @ParamName("objectId") String objectId,
       @Optional @ParamName("accessibleName") String accessibleName,
       @Optional @ParamName("role") String role);
+
+  /**
+   * The loadComplete event mirrors the load complete event sent by the browser to assistive
+   * technology when the web page has finished loading.
+   */
+  @EventName("loadComplete")
+  @Experimental
+  EventListener onLoadComplete(EventHandler<LoadComplete> eventListener);
+
+  /**
+   * The nodesUpdated event is sent every time a previously requested node has changed the in tree.
+   */
+  @EventName("nodesUpdated")
+  @Experimental
+  EventListener onNodesUpdated(EventHandler<NodesUpdated> eventListener);
 }

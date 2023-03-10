@@ -4,7 +4,7 @@ package com.github.kklisura.cdt.definition.builder.support.java.builder.impl;
  * #%L
  * cdt-java-protocol-builder
  * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
+ * Copyright (C) 2018 - 2023 Kenan Klisura
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,122 +20,97 @@ package com.github.kklisura.cdt.definition.builder.support.java.builder.impl;
  * #L%
  */
 
-import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.utils.SourceRoot;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.easymock.EasyMockRunner;
-import org.easymock.EasyMockSupport;
-import org.easymock.Mock;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import java.util.Scanner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 
 /**
  * Created by Kenan Klisura on 06/02/2018.
  *
  * @author Kenan Klisura
  */
-@RunWith(EasyMockRunner.class)
-public class SourceProjectImplTest extends EasyMockSupport {
+class SourceProjectImplTest {
 
-  @Mock private SourceRoot sourceRoot;
+  private SourceRoot sourceRoot;
 
-  @Mock private Path path;
+  @TempDir Path path;
 
   private SourceProjectImpl sourceProject;
 
-  @Before
-  public void setUp() throws Exception {
+  @BeforeEach
+  public void setUp() {
+    sourceRoot = Mockito.mock(SourceRoot.class);
     sourceProject = new SourceProjectImpl(sourceRoot);
   }
 
   @Test
-  public void testAddCompilationUnit() {
+  void testAddCompilationUnit() {
     CompilationUnit compilationUnit1 = new CompilationUnit();
 
-    expect(path.resolve("com/github/kklisura"))
-        .andReturn(Paths.get("source-project/main/com/github/kklisura"));
+    when(sourceRoot.getRoot()).thenReturn(path);
 
-    expect(sourceRoot.getRoot()).andReturn(path);
-
-    expect(sourceRoot.add(compilationUnit1)).andReturn(sourceRoot);
-
-    replayAll();
+    when(sourceRoot.add(compilationUnit1)).thenReturn(sourceRoot);
 
     sourceProject.addCompilationUnit("com.github.kklisura", "name", compilationUnit1);
 
-    verifyAll();
+    //    verify(path, Mockito.times(1)).resolve("com/github/kklisura");
+    verify(sourceRoot, Mockito.times(1)).getRoot();
+    verify(sourceRoot, Mockito.times(1)).add(compilationUnit1);
 
     assertTrue(
-        compilationUnit1
-            .getStorage()
-            .get()
-            .getPath()
-            .endsWith("source-project/main/com/github/kklisura/name.java"));
+        compilationUnit1.getStorage().get().getPath().endsWith("com/github/kklisura/name.java"));
   }
 
-  @Test(expected = RuntimeException.class)
-  public void testAddCompilationUnitThrowsExceptionWhenAddingDuplicateCompilationUnit() {
+  @Test
+  void testAddCompilationUnitThrowsExceptionWhenAddingDuplicateCompilationUnit() {
     CompilationUnit compilationUnit1 = new CompilationUnit();
     CompilationUnit compilationUnit2 = new CompilationUnit();
     compilationUnit2.addClass("TestClass");
 
-    expect(path.resolve("com/github/kklisura"))
-        .andReturn(Paths.get("source-project/main/com/github/kklisura"))
-        .times(2);
+    when(sourceRoot.getRoot()).thenReturn(path);
 
-    expect(sourceRoot.getRoot()).andReturn(path).times(2);
-
-    expect(sourceRoot.add(compilationUnit1)).andReturn(sourceRoot);
-    expect(sourceRoot.add(compilationUnit2)).andReturn(sourceRoot);
-
-    replayAll();
+    when(sourceRoot.add(compilationUnit1)).thenReturn(sourceRoot);
+    when(sourceRoot.add(compilationUnit2)).thenReturn(sourceRoot);
 
     sourceProject.addCompilationUnit("com.github.kklisura", "name", compilationUnit1);
-    sourceProject.addCompilationUnit("com.github.kklisura", "name", compilationUnit2);
+    assertThrows(
+        RuntimeException.class,
+        () -> sourceProject.addCompilationUnit("com.github.kklisura", "name", compilationUnit2));
   }
 
   @Test
-  public void testAddCompilationUnitAddingDuplicateCompilationUnit() {
+  void testAddCompilationUnitAddingDuplicateCompilationUnit() {
     CompilationUnit compilationUnit1 = new CompilationUnit();
 
-    expect(path.resolve("com/github/kklisura"))
-        .andReturn(Paths.get("source-project/main/com/github/kklisura"))
-        .times(2);
+    when(sourceRoot.getRoot()).thenReturn(path);
 
-    expect(sourceRoot.getRoot()).andReturn(path).times(2);
-
-    expect(sourceRoot.add(compilationUnit1)).andReturn(sourceRoot).times(2);
-
-    replayAll();
+    when(sourceRoot.add(compilationUnit1)).thenReturn(sourceRoot);
 
     sourceProject.addCompilationUnit("com.github.kklisura", "name", compilationUnit1);
     sourceProject.addCompilationUnit("com.github.kklisura", "name", compilationUnit1);
 
-    verifyAll();
+    verify(sourceRoot, Mockito.times(2)).getRoot();
+    verify(sourceRoot, Mockito.times(2)).add(compilationUnit1);
 
     assertTrue(
-        compilationUnit1
-            .getStorage()
-            .get()
-            .getPath()
-            .endsWith("source-project/main/com/github/kklisura/name.java"));
+        compilationUnit1.getStorage().get().getPath().endsWith("com/github/kklisura/name.java"));
   }
 
   @Test
-  public void testSaveAll() throws IOException {
+  void testSaveAll() throws IOException {
     CompilationUnit compilationUnit = new CompilationUnit();
     ClassOrInterfaceDeclaration classDeclaration = compilationUnit.addClass("TestClass");
     classDeclaration.addPrivateField("FieldType", "fieldName").createGetter();
@@ -149,19 +124,14 @@ public class SourceProjectImplTest extends EasyMockSupport {
     assertNotNull(file);
 
     try {
-      FileInputStream fileInputStream = new FileInputStream(file);
 
-      int length;
-      byte[] buffer = new byte[1024];
-      ByteArrayOutputStream result = new ByteArrayOutputStream();
-
-      while ((length = fileInputStream.read(buffer)) != -1) {
-        result.write(buffer, 0, length);
+      StringBuilder result = new StringBuilder();
+      Scanner myReader = new Scanner(file);
+      while (myReader.hasNextLine()) {
+        result.append(myReader.nextLine()).append('\n');
       }
 
-      String outputFile = result.toString("UTF-8");
-
-      assertEquals(
+      var expected =
           "public class TestClass {\n"
               + "\n"
               + "  private FieldType fieldName;\n"
@@ -169,8 +139,9 @@ public class SourceProjectImplTest extends EasyMockSupport {
               + "  public FieldType getFieldName() {\n"
               + "    return fieldName;\n"
               + "  }\n"
-              + "}\n",
-          outputFile);
+              + "}\n";
+
+      assertTrue(expected.trim().equals(result.toString().trim()));
     } finally {
       file.delete();
     }

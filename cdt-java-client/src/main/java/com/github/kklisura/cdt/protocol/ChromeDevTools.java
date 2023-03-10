@@ -1,28 +1,7 @@
 package com.github.kklisura.cdt.protocol;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.commands.Accessibility;
 import com.github.kklisura.cdt.protocol.commands.Animation;
-import com.github.kklisura.cdt.protocol.commands.ApplicationCache;
 import com.github.kklisura.cdt.protocol.commands.Audits;
 import com.github.kklisura.cdt.protocol.commands.BackgroundService;
 import com.github.kklisura.cdt.protocol.commands.Browser;
@@ -36,8 +15,11 @@ import com.github.kklisura.cdt.protocol.commands.DOMSnapshot;
 import com.github.kklisura.cdt.protocol.commands.DOMStorage;
 import com.github.kklisura.cdt.protocol.commands.Database;
 import com.github.kklisura.cdt.protocol.commands.Debugger;
+import com.github.kklisura.cdt.protocol.commands.DeviceAccess;
 import com.github.kklisura.cdt.protocol.commands.DeviceOrientation;
 import com.github.kklisura.cdt.protocol.commands.Emulation;
+import com.github.kklisura.cdt.protocol.commands.EventBreakpoints;
+import com.github.kklisura.cdt.protocol.commands.FedCm;
 import com.github.kklisura.cdt.protocol.commands.Fetch;
 import com.github.kklisura.cdt.protocol.commands.HeadlessExperimental;
 import com.github.kklisura.cdt.protocol.commands.HeapProfiler;
@@ -54,6 +36,7 @@ import com.github.kklisura.cdt.protocol.commands.Overlay;
 import com.github.kklisura.cdt.protocol.commands.Page;
 import com.github.kklisura.cdt.protocol.commands.Performance;
 import com.github.kklisura.cdt.protocol.commands.PerformanceTimeline;
+import com.github.kklisura.cdt.protocol.commands.Preload;
 import com.github.kklisura.cdt.protocol.commands.Profiler;
 import com.github.kklisura.cdt.protocol.commands.Runtime;
 import com.github.kklisura.cdt.protocol.commands.Schema;
@@ -93,9 +76,6 @@ public interface ChromeDevTools {
   /** Returns the Animation command. */
   Animation getAnimation();
 
-  /** Returns the ApplicationCache command. */
-  ApplicationCache getApplicationCache();
-
   /** Returns the Audits command. */
   Audits getAudits();
 
@@ -119,6 +99,9 @@ public interface ChromeDevTools {
 
   /** Returns the DOMDebugger command. */
   DOMDebugger getDOMDebugger();
+
+  /** Returns the EventBreakpoints command. */
+  EventBreakpoints getEventBreakpoints();
 
   /** Returns the DOMSnapshot command. */
   DOMSnapshot getDOMSnapshot();
@@ -206,4 +189,13 @@ public interface ChromeDevTools {
 
   /** Returns the Media command. */
   Media getMedia();
+
+  /** Returns the DeviceAccess command. */
+  DeviceAccess getDeviceAccess();
+
+  /** Returns the Preload command. */
+  Preload getPreload();
+
+  /** Returns the FedCm command. */
+  FedCm getFedCm();
 }

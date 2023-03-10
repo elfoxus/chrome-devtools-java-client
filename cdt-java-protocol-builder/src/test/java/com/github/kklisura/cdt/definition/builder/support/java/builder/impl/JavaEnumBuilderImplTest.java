@@ -4,7 +4,7 @@ package com.github.kklisura.cdt.definition.builder.support.java.builder.impl;
  * #%L
  * cdt-java-protocol-builder
  * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
+ * Copyright (C) 2018 - 2023 Kenan Klisura
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ import org.junit.runner.RunWith;
  */
 @RunWith(EasyMockRunner.class)
 public class JavaEnumBuilderImplTest extends EasyMockSupport {
+
+  String lineSeparator = System.lineSeparator();
   private static final String PACKAGE = "com.github.kklisura";
   private static final String NAME = "EnumName";
 
@@ -72,12 +74,20 @@ public class JavaEnumBuilderImplTest extends EasyMockSupport {
     javaEnumBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "import com.fasterxml.jackson.annotation.JsonProperty;\n"
-            + "\n"
-            + "public enum EnumName {\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("import com.fasterxml.jackson.annotation.JsonProperty;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("public enum EnumName {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -97,18 +107,32 @@ public class JavaEnumBuilderImplTest extends EasyMockSupport {
     javaEnumBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "import com.fasterxml.jackson.annotation.JsonProperty;\n"
-            + "\n"
-            + "/**\n"
-            + " * Java doc.\n"
-            + " */\n"
-            + "public enum EnumName {\n"
-            + "\n"
-            + "    @JsonProperty(\"enumConstant\")\n"
-            + "    ENUM_CONSTANT\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("import com.fasterxml.jackson.annotation.JsonProperty;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("/**")
+            .append(lineSeparator)
+            .append(" * Java doc.")
+            .append(lineSeparator)
+            .append(" */")
+            .append(lineSeparator)
+            .append("public enum EnumName {")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("    @JsonProperty(\"enumConstant\")")
+            .append(lineSeparator)
+            .append("    ENUM_CONSTANT")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();

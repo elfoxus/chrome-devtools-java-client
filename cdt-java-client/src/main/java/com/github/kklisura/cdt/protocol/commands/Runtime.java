@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.events.runtime.BindingCalled;
 import com.github.kklisura.cdt.protocol.events.runtime.ConsoleAPICalled;
 import com.github.kklisura.cdt.protocol.events.runtime.ExceptionRevoked;
@@ -41,6 +21,7 @@ import com.github.kklisura.cdt.protocol.types.runtime.CallArgument;
 import com.github.kklisura.cdt.protocol.types.runtime.CallFunctionOn;
 import com.github.kklisura.cdt.protocol.types.runtime.CompileScript;
 import com.github.kklisura.cdt.protocol.types.runtime.Evaluate;
+import com.github.kklisura.cdt.protocol.types.runtime.ExceptionDetails;
 import com.github.kklisura.cdt.protocol.types.runtime.HeapUsage;
 import com.github.kklisura.cdt.protocol.types.runtime.Properties;
 import com.github.kklisura.cdt.protocol.types.runtime.RemoteObject;
@@ -105,6 +86,16 @@ public interface Runtime {
    *     function on. Either executionContextId or objectId should be specified.
    * @param objectGroup Symbolic group name that can be used to release multiple objects. If
    *     objectGroup is not specified and objectId is, objectGroup will be inherited from object.
+   * @param throwOnSideEffect Whether to throw an exception if side effect cannot be ruled out
+   *     during evaluation.
+   * @param uniqueContextId An alternative way to specify the execution context to call function on.
+   *     Compared to contextId that may be reused across processes, this is guaranteed to be
+   *     system-unique, so it can be used to prevent accidental function call in context different
+   *     than intended (e.g. as a result of navigation across process boundaries). This is mutually
+   *     exclusive with `executionContextId`.
+   * @param generateWebDriverValue Whether the result should contain `webDriverValue`, serialized
+   *     according to https://w3c.github.io/webdriver-bidi. This is mutually exclusive with
+   *     `returnByValue`, but resulting `objectId` is still provided.
    */
   CallFunctionOn callFunctionOn(
       @ParamName("functionDeclaration") String functionDeclaration,
@@ -116,7 +107,10 @@ public interface Runtime {
       @Optional @ParamName("userGesture") Boolean userGesture,
       @Optional @ParamName("awaitPromise") Boolean awaitPromise,
       @Optional @ParamName("executionContextId") Integer executionContextId,
-      @Optional @ParamName("objectGroup") String objectGroup);
+      @Optional @ParamName("objectGroup") String objectGroup,
+      @Experimental @Optional @ParamName("throwOnSideEffect") Boolean throwOnSideEffect,
+      @Experimental @Optional @ParamName("uniqueContextId") String uniqueContextId,
+      @Experimental @Optional @ParamName("generateWebDriverValue") Boolean generateWebDriverValue);
 
   /**
    * Compiles expression.
@@ -196,10 +190,12 @@ public interface Runtime {
    *     with non-callable arguments. This flag bypasses CSP for this evaluation and allows
    *     unsafe-eval. Defaults to true.
    * @param uniqueContextId An alternative way to specify the execution context to evaluate in.
-   *     Compared to contextId that may be reused accross processes, this is guaranteed to be
+   *     Compared to contextId that may be reused across processes, this is guaranteed to be
    *     system-unique, so it can be used to prevent accidental evaluation of the expression in
-   *     context different than intended (e.g. as a result of navigation accross process
-   *     boundaries). This is mutually exclusive with `contextId`.
+   *     context different than intended (e.g. as a result of navigation across process boundaries).
+   *     This is mutually exclusive with `contextId`.
+   * @param generateWebDriverValue Whether the result should be serialized according to
+   *     https://w3c.github.io/webdriver-bidi.
    */
   Evaluate evaluate(
       @ParamName("expression") String expression,
@@ -217,7 +213,8 @@ public interface Runtime {
       @Experimental @Optional @ParamName("replMode") Boolean replMode,
       @Experimental @Optional @ParamName("allowUnsafeEvalBlockedByCSP")
           Boolean allowUnsafeEvalBlockedByCSP,
-      @Experimental @Optional @ParamName("uniqueContextId") String uniqueContextId);
+      @Experimental @Optional @ParamName("uniqueContextId") String uniqueContextId,
+      @Experimental @Optional @ParamName("generateWebDriverValue") Boolean generateWebDriverValue);
 
   /** Returns the isolate id. */
   @Experimental
@@ -249,12 +246,15 @@ public interface Runtime {
    * @param accessorPropertiesOnly If true, returns accessor properties (with getter/setter) only;
    *     internal properties are not returned either.
    * @param generatePreview Whether preview should be generated for the results.
+   * @param nonIndexedPropertiesOnly If true, returns non-indexed properties only.
    */
   Properties getProperties(
       @ParamName("objectId") String objectId,
       @Optional @ParamName("ownProperties") Boolean ownProperties,
       @Experimental @Optional @ParamName("accessorPropertiesOnly") Boolean accessorPropertiesOnly,
-      @Experimental @Optional @ParamName("generatePreview") Boolean generatePreview);
+      @Experimental @Optional @ParamName("generatePreview") Boolean generatePreview,
+      @Experimental @Optional @ParamName("nonIndexedPropertiesOnly")
+          Boolean nonIndexedPropertiesOnly);
 
   /** Returns all let, const and class variables from global scope. */
   @Returns("names")
@@ -374,7 +374,9 @@ public interface Runtime {
    * @param executionContextId If specified, the binding would only be exposed to the specified
    *     execution context. If omitted and `executionContextName` is not set, the binding is exposed
    *     to all execution contexts of the target. This parameter is mutually exclusive with
-   *     `executionContextName`.
+   *     `executionContextName`. Deprecated in favor of `executionContextName` due to an unclear use
+   *     case and bugs in implementation (crbug.com/1169639). `executionContextId` will be removed
+   *     in the future.
    * @param executionContextName If specified, the binding is exposed to the executionContext with
    *     matching name, even for contexts created after the binding is added. See also
    *     `ExecutionContext.name` and `worldName` parameter to
@@ -384,7 +386,7 @@ public interface Runtime {
   @Experimental
   void addBinding(
       @ParamName("name") String name,
-      @Optional @ParamName("executionContextId") Integer executionContextId,
+      @Deprecated @Optional @ParamName("executionContextId") Integer executionContextId,
       @Experimental @Optional @ParamName("executionContextName") String executionContextName);
 
   /**
@@ -395,6 +397,17 @@ public interface Runtime {
    */
   @Experimental
   void removeBinding(@ParamName("name") String name);
+
+  /**
+   * This method tries to lookup and populate exception details for a JavaScript Error object. Note
+   * that the stackTrace portion of the resulting exceptionDetails will only be populated if the
+   * Runtime domain was enabled at the time when the Error was thrown.
+   *
+   * @param errorObjectId The error object for which to resolve the exception details.
+   */
+  @Experimental
+  @Returns("exceptionDetails")
+  ExceptionDetails getExceptionDetails(@ParamName("errorObjectId") String errorObjectId);
 
   /** Notification is issued every time when binding is called. */
   @EventName("bindingCalled")

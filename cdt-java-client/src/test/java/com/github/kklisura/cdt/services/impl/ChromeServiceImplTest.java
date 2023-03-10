@@ -138,7 +138,7 @@ public class ChromeServiceImplTest extends EasyMockSupport {
 
     RecordedRequest request = server.takeRequest();
     assertEquals(1, server.getRequestCount());
-    assertEquals("GET /json/new?some-tab-name HTTP/1.1", request.getRequestLine());
+    assertEquals("PUT /json/new?some-tab-name HTTP/1.1", request.getRequestLine());
 
     assertEquals("", tab.getDescription());
     assertEquals(
@@ -174,7 +174,7 @@ public class ChromeServiceImplTest extends EasyMockSupport {
 
     RecordedRequest request = server.takeRequest();
     assertEquals(1, server.getRequestCount());
-    assertEquals("GET /json/new?about:blank HTTP/1.1", request.getRequestLine());
+    assertEquals("PUT /json/new?about:blank HTTP/1.1", request.getRequestLine());
 
     assertEquals("", tab.getDescription());
     assertEquals(

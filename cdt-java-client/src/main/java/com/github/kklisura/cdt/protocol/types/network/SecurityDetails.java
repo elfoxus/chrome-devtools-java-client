@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.types.network;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import java.util.List;
 
@@ -51,6 +31,10 @@ public class SecurityDetails {
   private List<SignedCertificateTimestamp> signedCertificateTimestampList;
 
   private CertificateTransparencyCompliance certificateTransparencyCompliance;
+
+  @Optional private Integer serverSignatureAlgorithm;
+
+  private Boolean encryptedClientHello;
 
   /** Protocol name (e.g. "TLS 1.2" or "QUIC"). */
   public String getProtocol() {
@@ -182,5 +166,31 @@ public class SecurityDetails {
   public void setCertificateTransparencyCompliance(
       CertificateTransparencyCompliance certificateTransparencyCompliance) {
     this.certificateTransparencyCompliance = certificateTransparencyCompliance;
+  }
+
+  /**
+   * The signature algorithm used by the server in the TLS server signature, represented as a TLS
+   * SignatureScheme code point. Omitted if not applicable or not known.
+   */
+  public Integer getServerSignatureAlgorithm() {
+    return serverSignatureAlgorithm;
+  }
+
+  /**
+   * The signature algorithm used by the server in the TLS server signature, represented as a TLS
+   * SignatureScheme code point. Omitted if not applicable or not known.
+   */
+  public void setServerSignatureAlgorithm(Integer serverSignatureAlgorithm) {
+    this.serverSignatureAlgorithm = serverSignatureAlgorithm;
+  }
+
+  /** Whether the connection used Encrypted ClientHello */
+  public Boolean getEncryptedClientHello() {
+    return encryptedClientHello;
+  }
+
+  /** Whether the connection used Encrypted ClientHello */
+  public void setEncryptedClientHello(Boolean encryptedClientHello) {
+    this.encryptedClientHello = encryptedClientHello;
   }
 }

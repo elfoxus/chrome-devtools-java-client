@@ -1,25 +1,6 @@
 package com.github.kklisura.cdt.protocol.types.network;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
+import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import com.github.kklisura.cdt.protocol.types.security.SecurityState;
 import java.util.Map;
@@ -35,13 +16,13 @@ public class Response {
 
   private Map<String, Object> headers;
 
-  @Optional private String headersText;
+  @Deprecated @Optional private String headersText;
 
   private String mimeType;
 
   @Optional private Map<String, Object> requestHeaders;
 
-  @Optional private String requestHeadersText;
+  @Deprecated @Optional private String requestHeadersText;
 
   private Boolean connectionReused;
 
@@ -68,6 +49,8 @@ public class Response {
   @Optional private String cacheStorageCacheName;
 
   @Optional private String protocol;
+
+  @Experimental @Optional private AlternateProtocolUsage alternateProtocolUsage;
 
   private SecurityState securityState;
 
@@ -113,12 +96,18 @@ public class Response {
     this.headers = headers;
   }
 
-  /** HTTP response headers text. */
+  /**
+   * HTTP response headers text. This has been replaced by the headers in
+   * Network.responseReceivedExtraInfo.
+   */
   public String getHeadersText() {
     return headersText;
   }
 
-  /** HTTP response headers text. */
+  /**
+   * HTTP response headers text. This has been replaced by the headers in
+   * Network.responseReceivedExtraInfo.
+   */
   public void setHeadersText(String headersText) {
     this.headersText = headersText;
   }
@@ -143,12 +132,18 @@ public class Response {
     this.requestHeaders = requestHeaders;
   }
 
-  /** HTTP request headers text. */
+  /**
+   * HTTP request headers text. This has been replaced by the headers in
+   * Network.requestWillBeSentExtraInfo.
+   */
   public String getRequestHeadersText() {
     return requestHeadersText;
   }
 
-  /** HTTP request headers text. */
+  /**
+   * HTTP request headers text. This has been replaced by the headers in
+   * Network.requestWillBeSentExtraInfo.
+   */
   public void setRequestHeadersText(String requestHeadersText) {
     this.requestHeadersText = requestHeadersText;
   }
@@ -282,6 +277,16 @@ public class Response {
   /** Protocol used to fetch this request. */
   public void setProtocol(String protocol) {
     this.protocol = protocol;
+  }
+
+  /** The reason why Chrome uses a specific transport protocol for HTTP semantics. */
+  public AlternateProtocolUsage getAlternateProtocolUsage() {
+    return alternateProtocolUsage;
+  }
+
+  /** The reason why Chrome uses a specific transport protocol for HTTP semantics. */
+  public void setAlternateProtocolUsage(AlternateProtocolUsage alternateProtocolUsage) {
+    this.alternateProtocolUsage = alternateProtocolUsage;
   }
 
   /** Security state of the request resource. */

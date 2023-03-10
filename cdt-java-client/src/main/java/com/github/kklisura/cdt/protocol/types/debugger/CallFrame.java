@@ -1,25 +1,6 @@
 package com.github.kklisura.cdt.protocol.types.debugger;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
+import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import com.github.kklisura.cdt.protocol.types.runtime.RemoteObject;
 import java.util.List;
@@ -35,13 +16,15 @@ public class CallFrame {
 
   private Location location;
 
-  private String url;
+  @Deprecated private String url;
 
   private List<Scope> scopeChain;
 
   private RemoteObject that;
 
   @Optional private RemoteObject returnValue;
+
+  @Experimental @Optional private Boolean canBeRestarted;
 
   /** Call frame identifier. This identifier is only valid while the virtual machine is paused. */
   public String getCallFrameId() {
@@ -83,12 +66,18 @@ public class CallFrame {
     this.location = location;
   }
 
-  /** JavaScript script name or url. */
+  /**
+   * JavaScript script name or url. Deprecated in favor of using the `location.scriptId` to resolve
+   * the URL via a previously sent `Debugger.scriptParsed` event.
+   */
   public String getUrl() {
     return url;
   }
 
-  /** JavaScript script name or url. */
+  /**
+   * JavaScript script name or url. Deprecated in favor of using the `location.scriptId` to resolve
+   * the URL via a previously sent `Debugger.scriptParsed` event.
+   */
   public void setUrl(String url) {
     this.url = url;
   }
@@ -121,5 +110,23 @@ public class CallFrame {
   /** The value being returned, if the function is at return point. */
   public void setReturnValue(RemoteObject returnValue) {
     this.returnValue = returnValue;
+  }
+
+  /**
+   * Valid only while the VM is paused and indicates whether this frame can be restarted or not.
+   * Note that a `true` value here does not guarantee that Debugger#restartFrame with this
+   * CallFrameId will be successful, but it is very likely.
+   */
+  public Boolean getCanBeRestarted() {
+    return canBeRestarted;
+  }
+
+  /**
+   * Valid only while the VM is paused and indicates whether this frame can be restarted or not.
+   * Note that a `true` value here does not guarantee that Debugger#restartFrame with this
+   * CallFrameId will be successful, but it is very likely.
+   */
+  public void setCanBeRestarted(Boolean canBeRestarted) {
+    this.canBeRestarted = canBeRestarted;
   }
 }

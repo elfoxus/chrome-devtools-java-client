@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.events.emulation.VirtualTimeBudgetExpired;
 import com.github.kklisura.cdt.protocol.support.annotations.EventName;
 import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
@@ -64,6 +44,19 @@ public interface Emulation {
    */
   @Experimental
   void setFocusEmulationEnabled(@ParamName("enabled") Boolean enabled);
+
+  /** Automatically render all web contents using a dark theme. */
+  @Experimental
+  void setAutoDarkModeOverride();
+
+  /**
+   * Automatically render all web contents using a dark theme.
+   *
+   * @param enabled Whether to enable or disable automatic dark mode. If not specified, any existing
+   *     override will be cleared.
+   */
+  @Experimental
+  void setAutoDarkModeOverride(@Optional @ParamName("enabled") Boolean enabled);
 
   /**
    * Enables CPU throttling to emulate slow CPUs.
@@ -184,7 +177,8 @@ public interface Emulation {
   /**
    * Emulates the given vision deficiency.
    *
-   * @param type Vision deficiency to emulate.
+   * @param type Vision deficiency to emulate. Order: best-effort emulations come first, followed by
+   *     any physiologically accurate emulations for medically recognized color vision deficiencies.
    */
   @Experimental
   void setEmulatedVisionDeficiency(@ParamName("type") SetEmulatedVisionDeficiencyType type);
@@ -283,8 +277,6 @@ public interface Emulation {
    *     paused and a virtualTimeBudgetExpired event is sent.
    * @param maxVirtualTimeTaskStarvationCount If set this specifies the maximum number of tasks that
    *     can be run before virtual is forced forwards to prevent deadlock.
-   * @param waitForNavigation If set the virtual time policy change should be deferred until any
-   *     frame starts navigating. Note any previous deferred policy change is superseded.
    * @param initialVirtualTime If set, base::Time::Now will be overridden to initially return this
    *     value.
    */
@@ -295,7 +287,6 @@ public interface Emulation {
       @Optional @ParamName("budget") Double budget,
       @Optional @ParamName("maxVirtualTimeTaskStarvationCount")
           Integer maxVirtualTimeTaskStarvationCount,
-      @Optional @ParamName("waitForNavigation") Boolean waitForNavigation,
       @Optional @ParamName("initialVirtualTime") Double initialVirtualTime);
 
   /** Overrides default host system locale with the specified one. */
@@ -336,6 +327,11 @@ public interface Emulation {
   @Experimental
   void setDisabledImageTypes(@ParamName("imageTypes") List<DisabledImageType> imageTypes);
 
+  /** @param hardwareConcurrency Hardware concurrency to report */
+  @Experimental
+  void setHardwareConcurrencyOverride(
+      @ParamName("hardwareConcurrency") Integer hardwareConcurrency);
+
   /**
    * Allows overriding user agent with the given string.
    *
@@ -357,6 +353,14 @@ public interface Emulation {
       @Optional @ParamName("acceptLanguage") String acceptLanguage,
       @Optional @ParamName("platform") String platform,
       @Experimental @Optional @ParamName("userAgentMetadata") UserAgentMetadata userAgentMetadata);
+
+  /**
+   * Allows overriding the automation flag.
+   *
+   * @param enabled Whether the override should be enabled.
+   */
+  @Experimental
+  void setAutomationOverride(@ParamName("enabled") Boolean enabled);
 
   /**
    * Notification sent after the virtual time budget for the current VirtualTimePolicy has run out.

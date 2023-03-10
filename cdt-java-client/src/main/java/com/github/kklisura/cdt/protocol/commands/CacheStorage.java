@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import com.github.kklisura.cdt.protocol.support.annotations.ParamName;
@@ -49,14 +29,23 @@ public interface CacheStorage {
    */
   void deleteEntry(@ParamName("cacheId") String cacheId, @ParamName("request") String request);
 
+  /** Requests cache names. */
+  @Returns("caches")
+  @ReturnTypeParameter(Cache.class)
+  List<Cache> requestCacheNames();
+
   /**
    * Requests cache names.
    *
-   * @param securityOrigin Security origin.
+   * @param securityOrigin At least and at most one of securityOrigin, storageKey must be specified.
+   *     Security origin.
+   * @param storageKey Storage key.
    */
   @Returns("caches")
   @ReturnTypeParameter(Cache.class)
-  List<Cache> requestCacheNames(@ParamName("securityOrigin") String securityOrigin);
+  List<Cache> requestCacheNames(
+      @Optional @ParamName("securityOrigin") String securityOrigin,
+      @Optional @ParamName("storageKey") String storageKey);
 
   /**
    * Fetches cache entry.

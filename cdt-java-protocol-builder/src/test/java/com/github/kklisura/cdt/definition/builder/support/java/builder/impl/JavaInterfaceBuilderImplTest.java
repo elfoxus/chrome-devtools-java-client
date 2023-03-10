@@ -4,7 +4,7 @@ package com.github.kklisura.cdt.definition.builder.support.java.builder.impl;
  * #%L
  * cdt-java-protocol-builder
  * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
+ * Copyright (C) 2018 - 2023 Kenan Klisura
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(EasyMockRunner.class)
 public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
+  String lineSeparator = System.lineSeparator();
   private static final String NAME = "InterfaceTest";
   private static final String BASE_PACKAGE_NAME = "com.github.kklisura";
   private static final String ANNOTATIONS_PACKAGE_NAME = "com.github.kklisura.annotations";
@@ -81,7 +82,16 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
     interfaceBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n" + "\n" + "public interface InterfaceTest {\n" + "}\n" + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("public interface InterfaceTest {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .append("")
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -104,15 +114,23 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
     interfaceBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "import com.github.kklisura.annotations.Annotation;\n"
-            + "\n"
-            + "@Annotation\n"
-            + "@Deprecated\n"
-            + "public interface InterfaceTest {\n"
-            + "}\n"
-            + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("@Annotation")
+            .append(lineSeparator)
+            .append("@Deprecated")
+            .append(lineSeparator)
+            .append("public interface InterfaceTest {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .append("")
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -132,13 +150,21 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
     interfaceBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "/**\n"
-            + " * Java doc.\n"
-            + " */\n"
-            + "public interface InterfaceTest {\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("/**")
+            .append(lineSeparator)
+            .append(" * Java doc.")
+            .append(lineSeparator)
+            .append(" */")
+            .append(lineSeparator)
+            .append("public interface InterfaceTest {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -161,12 +187,18 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
     interfaceBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n\n"
-            + "import java.util.List;\n"
-            + "\n"
-            + "public interface InterfaceTest {\n"
-            + "}\n"
-            + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("import java.util.List;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("public interface InterfaceTest {")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -180,7 +212,14 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
         eq(BASE_PACKAGE_NAME), eq(NAME), capture(compilationUnitCapture));
 
     String description =
-        "Method description\r\n\r\n@param test Test param\r\n@return Returns nothing";
+        new StringBuilder()
+            .append("Method description")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("@param test Test param")
+            .append(lineSeparator)
+            .append("@return Returns nothing")
+            .toString();
     interfaceBuilder.addMethod("someMethod1", description, Collections.emptyList(), null);
 
     replayAll();
@@ -188,20 +227,31 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
     interfaceBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "public interface InterfaceTest {\n"
-            + "\n"
-            + "    /**\n"
-            + "     * Method description\n"
-            + "     *\n"
-            + "     * @param test Test param\n"
-            + "     * @return Returns nothing\n"
-            + "     */\n"
-            + "    void someMethod1();"
-            + "\n"
-            + "}\n"
-            + "",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("public interface InterfaceTest {")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("    /**")
+            .append(lineSeparator)
+            .append("     * Method description")
+            .append(lineSeparator)
+            .append("     *")
+            .append(lineSeparator)
+            .append("     * @param test Test param")
+            .append(lineSeparator)
+            .append("     * @return Returns nothing")
+            .append(lineSeparator)
+            .append("     */")
+            .append(lineSeparator)
+            .append("    void someMethod1();")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();
@@ -246,25 +296,45 @@ public class JavaInterfaceBuilderImplTest extends EasyMockSupport {
     interfaceBuilder.build(sourceProject);
 
     assertEquals(
-        "package com.github.kklisura;\n"
-            + "\n"
-            + "import com.github.kklisura.annotations.Annotation;\n"
-            + "import com.github.kklisura.annotations.Annotation1;\n"
-            + "import com.github.kklisura.annotations.ParamValue;\n"
-            + "import com.github.kklisura.annotations.Annotation2;\n"
-            + "import com.github.kklisura.annotations.Annotation3;\n"
-            + "import com.github.kklisura.annotations.Annotation4;\n"
-            + "import com.github.kklisura.annotations.Annotation5;\n"
-            + "\n"
-            + "public interface InterfaceTest {\n"
-            + "\n"
-            + "    @Annotation\n"
-            + "    @Annotation2(\"param\")\n"
-            + "    @Annotation3(String.class)\n"
-            + "    @Annotation4(String.class)\n"
-            + "    @Annotation5({ String.class, Integer.class })\n"
-            + "    String someMethod1(Integer param1, @Annotation @Annotation1 @Deprecated @ParamValue(\"paramValueName\") String param2);\n"
-            + "}\n",
+        new StringBuilder()
+            .append("package com.github.kklisura;")
+            .append(lineSeparator)
+            .append("")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation1;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.ParamValue;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation2;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation3;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation4;")
+            .append(lineSeparator)
+            .append("import com.github.kklisura.annotations.Annotation5;")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("public interface InterfaceTest {")
+            .append(lineSeparator)
+            .append(lineSeparator)
+            .append("    @Annotation")
+            .append(lineSeparator)
+            .append("    @Annotation2(\"param\")")
+            .append(lineSeparator)
+            .append("    @Annotation3(String.class)")
+            .append(lineSeparator)
+            .append("    @Annotation4(String.class)")
+            .append(lineSeparator)
+            .append("    @Annotation5({ String.class, Integer.class })")
+            .append(lineSeparator)
+            .append(
+                "    String someMethod1(Integer param1, @Annotation @Annotation1 @Deprecated @ParamValue(\"paramValueName\") String param2);")
+            .append(lineSeparator)
+            .append("}")
+            .append(lineSeparator)
+            .toString(),
         compilationUnitCapture.getValue().toString());
 
     verifyAll();

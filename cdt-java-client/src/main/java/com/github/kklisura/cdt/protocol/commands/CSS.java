@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.events.css.FontsUpdated;
 import com.github.kklisura.cdt.protocol.events.css.MediaQueryResultChanged;
 import com.github.kklisura.cdt.protocol.events.css.StyleSheetAdded;
@@ -34,9 +14,13 @@ import com.github.kklisura.cdt.protocol.support.types.EventHandler;
 import com.github.kklisura.cdt.protocol.support.types.EventListener;
 import com.github.kklisura.cdt.protocol.types.css.BackgroundColors;
 import com.github.kklisura.cdt.protocol.types.css.CSSComputedStyleProperty;
+import com.github.kklisura.cdt.protocol.types.css.CSSContainerQuery;
+import com.github.kklisura.cdt.protocol.types.css.CSSLayerData;
 import com.github.kklisura.cdt.protocol.types.css.CSSMedia;
 import com.github.kklisura.cdt.protocol.types.css.CSSRule;
+import com.github.kklisura.cdt.protocol.types.css.CSSScope;
 import com.github.kklisura.cdt.protocol.types.css.CSSStyle;
+import com.github.kklisura.cdt.protocol.types.css.CSSSupports;
 import com.github.kklisura.cdt.protocol.types.css.InlineStylesForNode;
 import com.github.kklisura.cdt.protocol.types.css.MatchedStylesForNode;
 import com.github.kklisura.cdt.protocol.types.css.PlatformFontUsage;
@@ -161,6 +145,18 @@ public interface CSS {
   String getStyleSheetText(@ParamName("styleSheetId") String styleSheetId);
 
   /**
+   * Returns all layers parsed by the rendering engine for the tree scope of a node. Given a DOM
+   * element identified by nodeId, getLayersForNode returns the root layer for the nearest ancestor
+   * document or shadow root. The layer root contains the full layer tree for the tree scope and
+   * their ordering.
+   *
+   * @param nodeId
+   */
+  @Experimental
+  @Returns("rootLayer")
+  CSSLayerData getLayersForNode(@ParamName("nodeId") Integer nodeId);
+
+  /**
    * Starts tracking the given computed styles for updates. The specified array of properties
    * replaces the one previously specified. Pass empty array to disable tracking. Use
    * takeComputedStyleUpdates to retrieve the list of nodes that had properties modified. The
@@ -220,6 +216,48 @@ public interface CSS {
       @ParamName("text") String text);
 
   /**
+   * Modifies the expression of a container query.
+   *
+   * @param styleSheetId
+   * @param range
+   * @param text
+   */
+  @Experimental
+  @Returns("containerQuery")
+  CSSContainerQuery setContainerQueryText(
+      @ParamName("styleSheetId") String styleSheetId,
+      @ParamName("range") SourceRange range,
+      @ParamName("text") String text);
+
+  /**
+   * Modifies the expression of a supports at-rule.
+   *
+   * @param styleSheetId
+   * @param range
+   * @param text
+   */
+  @Experimental
+  @Returns("supports")
+  CSSSupports setSupportsText(
+      @ParamName("styleSheetId") String styleSheetId,
+      @ParamName("range") SourceRange range,
+      @ParamName("text") String text);
+
+  /**
+   * Modifies the expression of a scope at-rule.
+   *
+   * @param styleSheetId
+   * @param range
+   * @param text
+   */
+  @Experimental
+  @Returns("scope")
+  CSSScope setScopeText(
+      @ParamName("styleSheetId") String styleSheetId,
+      @ParamName("range") SourceRange range,
+      @ParamName("text") String text);
+
+  /**
    * Modifies the rule selector.
    *
    * @param styleSheetId
@@ -256,7 +294,7 @@ public interface CSS {
 
   /**
    * Stop tracking rule usage and return the list of rules that were used since last call to
-   * `takeCoverageDelta` (or since start of coverage instrumentation)
+   * `takeCoverageDelta` (or since start of coverage instrumentation).
    */
   @Returns("ruleUsage")
   @ReturnTypeParameter(RuleUsage.class)
@@ -264,7 +302,7 @@ public interface CSS {
 
   /**
    * Obtain list of rules that became used since last call to this method (or since start of
-   * coverage instrumentation)
+   * coverage instrumentation).
    */
   TakeCoverageDelta takeCoverageDelta();
 
@@ -278,7 +316,7 @@ public interface CSS {
 
   /**
    * Fires whenever a web font is updated. A non-empty font parameter indicates a successfully
-   * loaded web font
+   * loaded web font.
    */
   @EventName("fontsUpdated")
   EventListener onFontsUpdated(EventHandler<FontsUpdated> eventListener);

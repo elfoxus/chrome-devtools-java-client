@@ -72,6 +72,7 @@ public class WebSocketServiceImplTest extends EasyMockSupport {
 
     webSocketService.send(EMIT_LARGE_MESSAGE);
     sleep(500);
+    webSocketService.close();
 
     assertTrue(webSocketService.closed());
 

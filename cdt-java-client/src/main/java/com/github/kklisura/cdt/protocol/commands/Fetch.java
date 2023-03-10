@@ -1,28 +1,9 @@
 package com.github.kklisura.cdt.protocol.commands;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.events.fetch.AuthRequired;
 import com.github.kklisura.cdt.protocol.events.fetch.RequestPaused;
 import com.github.kklisura.cdt.protocol.support.annotations.EventName;
+import com.github.kklisura.cdt.protocol.support.annotations.Experimental;
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import com.github.kklisura.cdt.protocol.support.annotations.ParamName;
 import com.github.kklisura.cdt.protocol.support.annotations.Returns;
@@ -89,7 +70,9 @@ public interface Fetch {
    *     series of name: value pairs. Prefer the above method unless you need to represent some
    *     non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64
    *     string when passed over JSON)
-   * @param body A response body. (Encoded as a base64 string when passed over JSON)
+   * @param body A response body. If absent, original response body will be used if the request is
+   *     intercepted at the response stage and empty body will be used if the request is intercepted
+   *     at the request stage. (Encoded as a base64 string when passed over JSON)
    * @param responsePhrase A textual representation of responseCode. If absent, a standard phrase
    *     matching responseCode is used.
    */
@@ -116,14 +99,18 @@ public interface Fetch {
    * @param method If set, the request method is overridden.
    * @param postData If set, overrides the post data in the request. (Encoded as a base64 string
    *     when passed over JSON)
-   * @param headers If set, overrides the request headers.
+   * @param headers If set, overrides the request headers. Note that the overrides do not extend to
+   *     subsequent redirect hops, if a redirect happens. Another override may be applied to a
+   *     different request produced by a redirect.
+   * @param interceptResponse If set, overrides response interception behavior for this request.
    */
   void continueRequest(
       @ParamName("requestId") String requestId,
       @Optional @ParamName("url") String url,
       @Optional @ParamName("method") String method,
       @Optional @ParamName("postData") String postData,
-      @Optional @ParamName("headers") List<HeaderEntry> headers);
+      @Optional @ParamName("headers") List<HeaderEntry> headers,
+      @Experimental @Optional @ParamName("interceptResponse") Boolean interceptResponse);
 
   /**
    * Continues a request supplying authChallengeResponse following authRequired event.
@@ -134,6 +121,37 @@ public interface Fetch {
   void continueWithAuth(
       @ParamName("requestId") String requestId,
       @ParamName("authChallengeResponse") AuthChallengeResponse authChallengeResponse);
+
+  /**
+   * Continues loading of the paused response, optionally modifying the response headers. If either
+   * responseCode or headers are modified, all of them must be present.
+   *
+   * @param requestId An id the client received in requestPaused event.
+   */
+  @Experimental
+  void continueResponse(@ParamName("requestId") String requestId);
+
+  /**
+   * Continues loading of the paused response, optionally modifying the response headers. If either
+   * responseCode or headers are modified, all of them must be present.
+   *
+   * @param requestId An id the client received in requestPaused event.
+   * @param responseCode An HTTP response code. If absent, original response code will be used.
+   * @param responsePhrase A textual representation of responseCode. If absent, a standard phrase
+   *     matching responseCode is used.
+   * @param responseHeaders Response headers. If absent, original response headers will be used.
+   * @param binaryResponseHeaders Alternative way of specifying response headers as a \0-separated
+   *     series of name: value pairs. Prefer the above method unless you need to represent some
+   *     non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64
+   *     string when passed over JSON)
+   */
+  @Experimental
+  void continueResponse(
+      @ParamName("requestId") String requestId,
+      @Optional @ParamName("responseCode") Integer responseCode,
+      @Optional @ParamName("responsePhrase") String responsePhrase,
+      @Optional @ParamName("responseHeaders") List<HeaderEntry> responseHeaders,
+      @Optional @ParamName("binaryResponseHeaders") String binaryResponseHeaders);
 
   /**
    * Causes the body of the response to be received from the server and returned as a single string.

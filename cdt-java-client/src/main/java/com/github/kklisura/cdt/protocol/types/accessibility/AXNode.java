@@ -1,25 +1,5 @@
 package com.github.kklisura.cdt.protocol.types.accessibility;
 
-/*-
- * #%L
- * cdt-java-client
- * %%
- * Copyright (C) 2018 - 2021 Kenan Klisura
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
 import com.github.kklisura.cdt.protocol.support.annotations.Optional;
 import java.util.List;
 
@@ -34,6 +14,8 @@ public class AXNode {
 
   @Optional private AXValue role;
 
+  @Optional private AXValue chromeRole;
+
   @Optional private AXValue name;
 
   @Optional private AXValue description;
@@ -42,9 +24,13 @@ public class AXNode {
 
   @Optional private List<AXProperty> properties;
 
+  @Optional private String parentId;
+
   @Optional private List<String> childIds;
 
   @Optional private Integer backendDOMNodeId;
+
+  @Optional private String frameId;
 
   /** Unique identifier for this node. */
   public String getNodeId() {
@@ -84,6 +70,16 @@ public class AXNode {
   /** This `Node`'s role, whether explicit or implicit. */
   public void setRole(AXValue role) {
     this.role = role;
+  }
+
+  /** This `Node`'s Chrome raw role. */
+  public AXValue getChromeRole() {
+    return chromeRole;
+  }
+
+  /** This `Node`'s Chrome raw role. */
+  public void setChromeRole(AXValue chromeRole) {
+    this.chromeRole = chromeRole;
   }
 
   /** The accessible name for this `Node`. */
@@ -126,6 +122,16 @@ public class AXNode {
     this.properties = properties;
   }
 
+  /** ID for this node's parent. */
+  public String getParentId() {
+    return parentId;
+  }
+
+  /** ID for this node's parent. */
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
+
   /** IDs for each of this node's child nodes. */
   public List<String> getChildIds() {
     return childIds;
@@ -144,5 +150,15 @@ public class AXNode {
   /** The backend ID for the associated DOM node, if any. */
   public void setBackendDOMNodeId(Integer backendDOMNodeId) {
     this.backendDOMNodeId = backendDOMNodeId;
+  }
+
+  /** The frame ID for the frame associated with this nodes document. */
+  public String getFrameId() {
+    return frameId;
+  }
+
+  /** The frame ID for the frame associated with this nodes document. */
+  public void setFrameId(String frameId) {
+    this.frameId = frameId;
   }
 }
