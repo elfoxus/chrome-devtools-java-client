@@ -1,5 +1,9 @@
 # Chrome DevTools Java Client
 
+## INFO
+
+The code is modified to be able to cooperate with CHROME v. 111+
+
 ## Description
 
 Chrome DevTools Java Client is a DevTools client - in Java. (: It can be used for *instrumenting, inspecting, debuging and profiling Chromium, Chrome and other Blink-based browsers.* [1]
